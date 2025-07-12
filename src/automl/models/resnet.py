@@ -21,23 +21,31 @@ class ResNetType(Enum):
 class ResNetBackbone(nn.Module):
     def __init__(self, resnet_type: ResNetType, pretrained: bool, frozen: bool) -> None:
         self.resnet_type = resnet_type
+        self.pretrained = pretrained
+        self.frozen = frozen
+        self.in_shape = (3, 224, 224)
         super(ResNetBackbone, self).__init__()
         match resnet_type:
             case ResNetType.RESNET18:
                 weights = ResNet18_Weights.DEFAULT if pretrained else None
                 orig = resnet18(weights=weights)
+                self.out_channels = 512
             case ResNetType.RESNET34:
                 weights = ResNet34_Weights.DEFAULT if pretrained else None
                 orig = resnet34(weights=weights)
+                self.out_channels = 512
             case ResNetType.RESNET50:
                 weights = ResNet50_Weights.DEFAULT if pretrained else None
                 orig = resnet50(weights=weights)
+                self.out_channels = 2048
             case ResNetType.RESNET101:
                 weights = ResNet101_Weights.DEFAULT if pretrained else None
                 orig = resnet101(weights=weights)
+                self.out_channels = 2048
             case ResNetType.RESNET152:
                 weights = ResNet152_Weights.DEFAULT if pretrained else None
                 orig = resnet152(weights=weights)
+                self.out_channels = 2048
             case _:
                 raise ValueError(f"Unsupported ResNet type: {resnet_type}")
 

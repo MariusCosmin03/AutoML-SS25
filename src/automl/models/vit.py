@@ -27,18 +27,23 @@ class ViTBackbone(torch.nn.Module):
             case ViTType.VIT_B_16:
                 weights = ViT_B_16_Weights.DEFAULT if pretrained else None
                 self.model = vit_b_16(weights=weights)
+                self.out_channels = 768
             case ViTType.VIT_B_32:
                 weights = ViT_B_32_Weights.DEFAULT if pretrained else None
                 self.model = vit_b_32(weights=weights)
+                self.out_channels = 768
             case ViTType.VIT_L_16:
                 weights = ViT_L_16_Weights.DEFAULT if pretrained else None
                 self.model = vit_l_16(weights=weights)
+                self.out_channels = 1024
             case ViTType.VIT_L_32:
                 weights = ViT_L_32_Weights.DEFAULT if pretrained else None
                 self.model = vit_l_32(weights=weights)
+                self.out_channels = 1024
             case ViTType.VIT_H_14:
                 weights = ViT_H_14_Weights.DEFAULT if pretrained else None
                 self.model = vit_h_14(weights=weights)
+                self.out_channels = 1280
             case _:
                 raise ValueError(f"Unsupported ViT type: {vit_type}")
 
@@ -68,3 +73,6 @@ class ViTBackbone(torch.nn.Module):
 
 if __name__ == "__main__":
     model = ViTBackbone(ViTType.VIT_B_16, pretrained=True, frozen=False).cuda()
+    d2 = torch.randn(1, 3, 224, 224).cuda()
+    print(model(d2).shape)
+    print(model(d1).shape)
