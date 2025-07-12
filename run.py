@@ -57,14 +57,12 @@ def main(
 
     # check if test_labels has missing data
 
-
     if not np.isnan(test_labels).any():
         acc = accuracy_score(test_labels, test_preds)
         logger.info(f"Accuracy on test set: {acc}")
     else:
         # This is the setting for the exam dataset, you will not have access to the labels
         logger.info(f"No test split for dataset '{dataset}'")
-
 
 
 if __name__ == "__main__":

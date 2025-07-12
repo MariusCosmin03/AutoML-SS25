@@ -31,6 +31,7 @@ class AutoML:
     ) -> None:
         self.seed = seed
         self._model: nn.Module | None = None
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     def fit(
         self,
@@ -65,14 +66,16 @@ class AutoML:
         input_size = dataset_class.width * dataset_class.height * dataset_class.channels
 
         model = DummyNN(input_size, dataset_class.num_classes)
+        model.to(self.device)
         criterion = nn.CrossEntropyLoss()
         optimizer = optim.Adam(model.parameters(), lr=0.003)
-        
+
         model.train()
         for epoch in range(5):
             loss_per_batch = []
             for _, (data, target) in enumerate(train_loader):
                 optimizer.zero_grad()
+                data = data.to(self.device)
                 output = model(data)
                 loss = criterion(output, target)
                 loss.backward()
@@ -105,5 +108,5 @@ class AutoML:
                 predictions.append(predicted.numpy())
         predictions = np.concatenate(predictions)
         labels = np.concatenate(labels)
-        
+
         return predictions, labels
