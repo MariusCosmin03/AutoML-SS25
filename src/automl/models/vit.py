@@ -75,4 +75,3 @@ if __name__ == "__main__":
     model = ViTBackbone(ViTType.VIT_B_16, pretrained=True, frozen=False).cuda()
     d2 = torch.randn(1, 3, 224, 224).cuda()
     print(model(d2).shape)
-    print(model(d1).shape)

@@ -1,12 +1,11 @@
-import torch
 import torch.nn as nn
 import logging
 
-from automl.models.resnet import ResNetBackbone, ResNetType
+from automl.models.resnet import ResNetBackbone
 from automl.models.vit import ViTBackbone, ViTType
-from automl.models.head import PredictionHead, HeadActivationType
+from automl.models.head import PredictionHead
 
-type ImageBackbone = ResNetBackbone | ViTBackbone
+ImageBackbone = ResNetBackbone | ViTBackbone
 
 
 class ClassificationModel(nn.Module):
@@ -19,6 +18,20 @@ class ClassificationModel(nn.Module):
 
         logging.info(f"Initialized ClassificationModel with backbone={type(backbone).__name__} "
                      f"and head={type(head).__name__}")
+
+
+def make_model(model_family: str, resnet_type: int | None, backbone_frozen: bool,
+               in_features: int, n_classes: int, head_activation: str, head_n_hidden: int,
+               head_d_hidden: int, dropout: float) -> ClassificationModel:
+    match model_family:
+        case "resnet":
+            if resnet_type is None:
+                raise ValueError("resnet_type must be specified for ResNet backbone.")
+            backbone = ResNetBackbone(resnet_type=resnet_type, pretrained=True, frozen=backbone_frozen)
+        case _:
+            raise ValueError(f"Unsupported model family: {model_family}")
+    
+    
 
 
 if __name__ == "__main__":

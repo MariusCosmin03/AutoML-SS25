@@ -6,43 +6,35 @@ from torchvision.models import (
     ResNet101_Weights, ResNet152_Weights
 )
 
-from enum import Enum
+from typing import Literal
 import logging
 
 
-class ResNetType(Enum):
-    RESNET18 = 'resnet18'
-    RESNET34 = 'resnet34'
-    RESNET50 = 'resnet50'
-    RESNET101 = 'resnet101'
-    RESNET152 = 'resnet152'
-
-
 class ResNetBackbone(nn.Module):
-    def __init__(self, resnet_type: ResNetType, pretrained: bool, frozen: bool) -> None:
+    def __init__(self, resnet_type: Literal[18, 34, 50, 101, 152], pretrained: bool, frozen: bool) -> None:
         self.resnet_type = resnet_type
         self.pretrained = pretrained
         self.frozen = frozen
         self.in_shape = (3, 224, 224)
         super(ResNetBackbone, self).__init__()
         match resnet_type:
-            case ResNetType.RESNET18:
+            case 18:
                 weights = ResNet18_Weights.DEFAULT if pretrained else None
                 orig = resnet18(weights=weights)
                 self.out_channels = 512
-            case ResNetType.RESNET34:
+            case 34:
                 weights = ResNet34_Weights.DEFAULT if pretrained else None
                 orig = resnet34(weights=weights)
                 self.out_channels = 512
-            case ResNetType.RESNET50:
+            case 50:
                 weights = ResNet50_Weights.DEFAULT if pretrained else None
                 orig = resnet50(weights=weights)
                 self.out_channels = 2048
-            case ResNetType.RESNET101:
+            case 101:
                 weights = ResNet101_Weights.DEFAULT if pretrained else None
                 orig = resnet101(weights=weights)
                 self.out_channels = 2048
-            case ResNetType.RESNET152:
+            case 152:
                 weights = ResNet152_Weights.DEFAULT if pretrained else None
                 orig = resnet152(weights=weights)
                 self.out_channels = 2048
@@ -54,7 +46,7 @@ class ResNetBackbone(nn.Module):
         for param in self.model.parameters():
             param.requires_grad = not frozen
 
-        logging.info(f"Initialized {resnet_type.value} backbone with pretrained={pretrained} and frozen={frozen}")
+        logging.info(f"Initialized {resnet_type} backbone with pretrained={pretrained} and frozen={frozen}")
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
@@ -71,4 +63,4 @@ class ResNetBackbone(nn.Module):
 
 
 if __name__ == "__main__":
-    model = ResNetBackbone(ResNetType.RESNET50, pretrained=True, frozen=True)
+    model = ResNetBackbone(50, pretrained=True, frozen=True)

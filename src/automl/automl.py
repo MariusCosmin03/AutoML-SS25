@@ -5,6 +5,7 @@ You do not need to use this setup, and you can modify this however you like.
 """
 from __future__ import annotations
 
+import os.path as osp
 from typing import Any, Tuple
 
 import torch
@@ -28,10 +29,15 @@ class AutoML:
     def __init__(
         self,
         seed: int,
+        config_file: str = "./search_space.yaml",
     ) -> None:
         self.seed = seed
         self._model: nn.Module | None = None
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        if not osp.isfile(config_file):
+            raise FileNotFoundError(f"Config file {config_file} does not exist.")
+        self.config_file: str = config_file
 
     def fit(
         self,

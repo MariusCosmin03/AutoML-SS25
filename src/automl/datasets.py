@@ -91,10 +91,10 @@ class BaseVisionDataset(VisionDataset):
             return
 
         # Extract to temporary location
-     
+
         with tempfile.TemporaryDirectory() as temp_dir:
             print(f"Downloading and extracting {self._download_file}...")
-            
+
             download_and_extract_archive(
                 url=f"{self._download_url_prefix}{self._download_file}",
                 download_root=temp_dir,
@@ -102,19 +102,20 @@ class BaseVisionDataset(VisionDataset):
                 filename=self._download_file,
                 remove_finished=True
             )
-            
+
             # Find phase folder and move contents to data/
             phase_folder = next(Path(temp_dir).glob("phase*"))
             data_path = Path(self.root)
             data_path.mkdir(exist_ok=True)
-            
+
             for item in phase_folder.iterdir():
                 destination = data_path / item.name
                 if destination.exists():
                     shutil.rmtree(destination)
                 shutil.move(str(item), str(destination))
-        
+
         print("Download completed.")
+
     def extra_repr(self) -> str:
         """String representation of the dataset."""
         return f"split={self._split}"

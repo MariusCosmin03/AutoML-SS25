@@ -1,0 +1,61 @@
+# Backbone architectures
+model_family:
+  type: ordinal
+  choices: [resnet]
+
+resnet_type:
+  type: ordinal
+  choices: [18, 34, 50, 101, 152]
+  conditional:
+    parent: model_family
+    values: ["resnet"]
+
+backbone_frozen:
+  type: boolean
+
+
+# Prediction head Parameters
+head_activation:
+  type: categorical
+  choices: [relu, gelu, sigmoid, tanh]
+
+head_n_hidden:
+  type: integer
+  low: 0
+  high: 4
+
+head_d_hidden:
+  type: ordinal
+  choices: [32, 64, 128, 512, 1024, 2048]
+
+dropout_rate:
+  type: ordinal
+  choices: [0.0, 0.1, 0.2, 0.3, 0.4]
+
+
+# Augmentations
+augmentations:
+  type: 
+  choices: [flip, rotation]
+
+
+# Training Hyperparameter
+lr:
+  type: float
+  lower: 1e-5
+  upper: 1e-1
+  log: true
+  prior: 1e-3
+
+optimizer:
+  type: categorical
+  choices: ["sgd", "adam"]
+
+epochs:
+  type: int
+  lower: 20
+  upper: 100
+
+batch_size:
+  type: ordinal
+  choices: [16, 32, 64, 128]
